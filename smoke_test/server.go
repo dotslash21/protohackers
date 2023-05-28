@@ -2,15 +2,17 @@ package smoke_test
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 )
 
-var PORT = 8080
+var PORT = 80
 
 func RunServer() {
 	for {
 		// Listen for incoming connections
+		log.Print("Listening on port ", PORT, " for incoming connections.")
 		lst, err := net.Listen("tcp", ":"+fmt.Sprint(PORT))
 		if err != nil {
 			// Handle error
@@ -26,22 +28,16 @@ func RunServer() {
 				log.Fatal(err)
 			}
 
-			go func(c net.Conn) {
-				// Echo all incoming data.
-				buf := make([]byte, 1024)
-				for {
-					n, err := c.Read(buf)
-					if err != nil {
-						// Handle error
-						log.Fatal(err)
-					}
-					_, err = c.Write(buf[0:n])
-					if err != nil {
-						// Handle error
-						log.Fatal(err)
-					}
-				}
-			}(conn)
+			log.Print("Accepted connection from ", conn.RemoteAddr().String())
+			go handleConnection(conn)
 		}
 	}
+}
+
+func handleConnection(c net.Conn) {
+	defer c.Close()
+
+	io.Copy(c, c)
+
+	log.Print("Closing connection to ", c.RemoteAddr().String())
 }
