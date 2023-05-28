@@ -1,7 +1,9 @@
 package main
 
-import "arunangshu.dev/protohackers/smoke_test"
+import (
+	"arunangshu.dev/protohackers/prime_time"
+)
 
 func main() {
-	smoke_test.RunServer()
+	prime_time.RunServer()
 }
