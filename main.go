@@ -1,9 +1,9 @@
 package main
 
 import (
-	"arunangshu.dev/protohackers/means_to_an_end"
+	"arunangshu.dev/protohackers/budget_chat"
 )
 
 func main() {
-	means_to_an_end.RunServer()
+	budget_chat.RunServer()
 }
