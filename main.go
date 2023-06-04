@@ -1,9 +1,9 @@
 package main
 
 import (
-	"arunangshu.dev/protohackers/prime_time"
+	"arunangshu.dev/protohackers/means_to_an_end"
 )
 
 func main() {
-	prime_time.RunServer()
+	means_to_an_end.RunServer()
 }
