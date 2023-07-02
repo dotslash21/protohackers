@@ -36,6 +36,7 @@ func handleConnection(conn net.Conn) {
 	participant, err := room.RegisterParticipant(conn)
 	if err != nil {
 		log.Printf("Failed to register participant: %v", err)
+		return
 	}
 
 	room.ListenForMessages(participant)

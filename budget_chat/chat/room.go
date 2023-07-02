@@ -27,7 +27,7 @@ func NewRoom() *Room {
 
 func (r *Room) RegisterParticipant(conn net.Conn) (*Participant, error) {
 	// Prompt the client for their name
-	namePrompt := []byte("Welcome to budgetchat! What shall I call you?\n")
+	namePrompt := []byte("[SERVER] Welcome to budgetchat! What shall I call you?\n")
 	_, err := conn.Write(namePrompt)
 	if err != nil {
 		log.Printf("Failed to write response: %v", err)
@@ -39,6 +39,30 @@ func (r *Room) RegisterParticipant(conn net.Conn) (*Participant, error) {
 	if scanner.Scan() {
 		name := scanner.Text()
 		log.Printf("Client's name is %s", name)
+
+		// Validate the name
+		// a. Must be between 1 and 16 characters
+		if len(name) < 1 || len(name) > 16 {
+			log.Printf("The name must be between 1 and 16 characters")
+			conn.Write([]byte("[SERVER] The name must be between 1 and 16 characters\n"))
+			return nil, fmt.Errorf("the name must be between 1 and 16 characters")
+		}
+		// b. Must contain only alphanumeric characters
+		for _, c := range name {
+			if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+				log.Printf("The name must contain only alphanumeric characters")
+				conn.Write([]byte("[SERVER] The name must contain only alphanumeric characters\n"))
+				return nil, fmt.Errorf("the name must contain only alphanumeric characters")
+			}
+		}
+		// c. Must not already be taken
+		for _, p := range r.Participants {
+			if p.Name == name {
+				log.Printf("The name %s is already taken", name)
+				conn.Write([]byte("[SERVER] The name " + name + " is already taken\n"))
+				return nil, fmt.Errorf("the name %s is already taken", name)
+			}
+		}
 
 		// Create a new client
 		participant := Participant{
